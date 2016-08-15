@@ -13,11 +13,15 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
+io.on('connection', function(socket) {
+    console.log("someone entered the chat room!");
+});
+
+app.use(cors());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-app.use(cors());
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -27,10 +31,6 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cookieParser());
 
-app.use(function(req, res, next) {
-    res.io = io;
-    next();
-});
 app.use('/', routes);
 
 
