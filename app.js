@@ -12,6 +12,9 @@ var app = express();
 
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+io.on("connection", socket => {
+    console.log("'ello");
+});
 
 app.use(cors());
 // view engine setup
@@ -64,6 +67,5 @@ app.use(function(err, req, res, next) {
 
 module.exports = {
     app,
-    server,
-    io
+    server
 };

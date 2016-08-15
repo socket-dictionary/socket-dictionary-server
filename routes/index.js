@@ -3,9 +3,11 @@ var router = express.Router();
 var api = require('../api/words');
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/word', function(req, res, next) {
     api.getWord().then(word => {
-        res.send(word);
+        api.getDefinition(word).then(definition => {
+            res.send(definition);
+        })
     });
 });
 
