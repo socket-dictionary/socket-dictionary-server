@@ -13,11 +13,9 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-io.on("connection", () => {
-    console.log("WATTTT");
-})
-
-
+io.on('connection', function(socket) {
+    console.log("someone entered the chat room!");
+});
 app.use(cors());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
