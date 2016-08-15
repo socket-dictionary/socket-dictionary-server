@@ -11,20 +11,30 @@ var game = new Game();
 
 var app = express();
 
-
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+
+var allGames = [];
+
 io.on("connection", socket => {
 	console.log('A user has entered')
+
 	socket.on('new-game', function(data) {
+    var newGame = new Game();
 		console.log('room=', data.gameId);
-		game.createGame(data)
+    newGame.createGame(data)
+    allGames.push(newGame)
 		socket.join(data.gameId)
 	})
+
 	socket.on('join-game', function(data) {
-		game.joinGame(data.playerUsername)
+    var gameToJoin = allGames.find(function (game) { return game.gameId == data.gameId})
+    gameToJoin.players.push({username: data.playerUsername, score: 0, currentRole: 'player'})
+    console.log('allGames=', allGames);
+		// game.joinGame(data.playerUsername)
 		socket.join(data.gameId)
 	})
+
 });
 
 app.use(cors());
