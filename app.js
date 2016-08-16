@@ -24,17 +24,21 @@ io.on("connection", socket => {
 		console.log('room=', data.gameId);
     newGame.createGame(data)
     allGames.push(newGame)
-		console.log('all games', allGames)
+		console.log('data', data)
 		socket.join(data.gameId)
+		io.emit('player-joined', data)
 	})
 
 	socket.on('join-game', function(data) {
     var gameToJoin = allGames.find(function (game) { return game.gameId == data.gameId})
-    gameToJoin.players.push({username: data.playerUsername, score: 0, currentRole: 'player'})
+    gameToJoin.players.push({username: data.username, score: 0, currentRole: 'player'})
     console.log('allGames=', allGames);
 		// game.joinGame(data.playerUsername)
 		socket.join(data.gameId)
+		io.emit('player-joined', data)
 	})
+
+
 
 });
 
