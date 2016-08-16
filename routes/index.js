@@ -11,8 +11,6 @@ router.get('/word', function(req, res, next) {
     });
 });
 
-router.get('/gameroom/:id', function(req, res, next) {
-  console.log("got games:", games)
-})
+
 
 module.exports = router;

@@ -7,7 +7,7 @@ class newGameRoom {
   createGame (data) {
     this.gameId = data.gameId,
     this.players = [{
-      username: data.hostUsername,
+      username: data.username,
       score: 0,
       currentRole: 'picker'
     }]

@@ -14,26 +14,50 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-var allGames = [];
+var allGames = {
+	123: {
+		players: {
+			'/#6reys8IXaGD-L5OPAAAA': {
+				username: 'qwe',
+				score: 0,
+				currentRole: 'player'
+			},
+			'/#6reys8IXaGD-L5OPAAAA': {
+				username: 'sup',
+				score: 0,
+				currentRole: 'player'
+			}
+		}
+	}
+};
 
 io.on("connection", socket => {
-	console.log('A user has entered')
 
 	socket.on('new-game', function(data) {
-    var newGame = new Game();
-		console.log('room=', data.gameId);
-    newGame.createGame(data)
-    allGames.push(newGame)
-		console.log('all games', allGames)
+		allGames[data.gameId] = {
+			players: {
+				[socket.id]: {
+					username: data.username,
+					score: 0,
+					currentRole: 'picker'
+				}
+			}
+		}
 		socket.join(data.gameId)
+		console.log('allGames=', allGames);
+		console.log('this games players=', allGames[data.gameId].players);
+		io.emit('player-joined', data)
 	})
 
 	socket.on('join-game', function(data) {
-    var gameToJoin = allGames.find(function (game) { return game.gameId == data.gameId})
-    gameToJoin.players.push({username: data.playerUsername, score: 0, currentRole: 'player'})
-    console.log('allGames=', allGames);
-		// game.joinGame(data.playerUsername)
+		allGames[data.gameId].players[socket.id] = {
+			username: data.username,
+			score: 0,
+			currentRole: 'player'
+		}
+		console.log('this games players=', allGames[data.gameId].players);
 		socket.join(data.gameId)
+		io.emit('player-joined', data, allGames[data.gameId])
 	})
 
 });
