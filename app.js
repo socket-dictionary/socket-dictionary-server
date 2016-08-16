@@ -44,11 +44,14 @@ io.on("connection", socket => {
 				}
 			}
 		}
-		console.log('new-game data.gameId=', data.gameId);
 		socket.join(data.gameId)
-		console.log('allGames=', allGames);
-		console.log('this games players=', allGames[data.gameId].players);
-		io.to(data.gameId).emit('player-joined', data, allGames[data.gameId])
+		var userSpecificData = {
+			username: data.username,
+			role: 'picker',
+			gameId: data.gameId,
+			gameInfo: allGames[data.gameId]
+		}
+		io.to(socket.id).emit('set-user-info', userSpecificData)
 	})
 
 	socket.on('join-game', function(data) {
@@ -60,11 +63,16 @@ io.on("connection", socket => {
 		}
 		console.log('allGames=', allGames);
 		console.log('this games players=', allGames[data.gameId].players);
-
-		console.log("join-game data.gameId=", data.gameId);
+		console.log("io.sockets.adapter.rooms=", io.sockets.adapter.rooms);
 		socket.join(data.gameId)
-				console.log("io.sockets.adapter.rooms=", io.sockets.adapter.rooms);
-		io.to(data.gameId).emit('player-joined', data, allGames[data.gameId]) // loop through players in that game & emit to only them
+		var userSpecificData = {
+			username: data.username,
+			role: 'player',
+			gameId: gameId
+		}
+		io.to(data.gameId).emit('player-joined', allGames[gameId]) // loop through players in that game & emit to only them
+		io.to(socket.id).emit('set-user-info', userSpecificData)
+
 	})
 
 });
