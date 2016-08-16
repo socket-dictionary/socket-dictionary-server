@@ -24,6 +24,7 @@ io.on("connection", socket => {
 		console.log('room=', data.gameId);
     newGame.createGame(data)
     allGames.push(newGame)
+		console.log('all games', allGames)
 		socket.join(data.gameId)
 	})
 
@@ -36,6 +37,7 @@ io.on("connection", socket => {
 	})
 
 });
+
 
 app.use(cors());
 // view engine setup
