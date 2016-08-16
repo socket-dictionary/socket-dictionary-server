@@ -35,7 +35,7 @@ io.on("connection", socket => {
     console.log('allGames=', allGames);
 		// game.joinGame(data.playerUsername)
 		socket.join(data.gameId)
-		io.emit('player-joined', data)
+		io.emit('player-joined', data, gameToJoin)
 	})
 
 
