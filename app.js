@@ -14,6 +14,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
+// change players to array?
 var allGames = {
 	123: {
 		players: {
@@ -58,8 +59,9 @@ io.on("connection", socket => {
 		}
 		console.log('allGames=', allGames);
 		console.log('this games players=', allGames[data.gameId].players);
+		console.log("io.sockets.adapter.rooms=", io.sockets.adapter.rooms);
 		socket.join(data.gameId)
-		io.emit('player-joined', data, allGames[data.gameId])
+		io.emit('player-joined', data, allGames[data.gameId]) // loop through players in that game & emit to only them
 	})
 
 });
