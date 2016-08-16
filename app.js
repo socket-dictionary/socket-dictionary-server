@@ -50,14 +50,13 @@ io.on("connection", socket => {
 	})
 
 	socket.on('join-game', function(data) {
-		console.log("data=", data);
-		console.log('allGames=', allGames);
 		var gameId = parseInt(data.gameId)
 		allGames[gameId].players[socket.id] = {
 			username: data.username,
 			score: 0,
 			currentRole: 'player'
 		}
+		console.log('allGames=', allGames);
 		console.log('this games players=', allGames[data.gameId].players);
 		socket.join(data.gameId)
 		io.emit('player-joined', data, allGames[data.gameId])
