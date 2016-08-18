@@ -14,30 +14,10 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-// change players to array?
-var allGames = {
-    123: {
-        players: {
-            '/#6reys8IXaGD-L5OPAAAA': {
-                username: 'qwe',
-                score: 0,
-                currentRole: 'player'
-            },
-            '/#6reys8IXaGD-L5OPAAAA': {
-                username: 'sup',
-                score: 0,
-                currentRole: 'player'
-            }
-        }
-    }
-};
-
 io.on("connection", socket => {
-    socket.on('join:room', function(data) {
+    socket.on('join:room', function(room_name) {
         socket.join(room_name);
-        console.log('allData', data)
-        console.log('allGames', allGames)
-        console.log('data', io.sockets.adapter.rooms[room_name])
+
         if (io.sockets.adapter.rooms[room_name].length === 1) {
             io.in(socket.id).emit('first_player', "first_player");
         }
