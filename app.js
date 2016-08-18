@@ -14,7 +14,6 @@ var io = require('socket.io')(server);
 
 app.use(cors());
 
-
 io.on('connection', function(socket) {
 
     socket.on('join:room', function(data) {
@@ -52,7 +51,6 @@ io.on('connection', function(socket) {
     });
 
     socket.on('updateScore', function(choice, room) {
-        console.log("choice in server: ", choice, "room in server: ", room);
         io.in(room).emit('updateScore', choice)
     })
 });
