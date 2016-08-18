@@ -16,57 +16,59 @@ var io = require('socket.io')(server);
 
 // change players to array?
 var allGames = {
-	123: {
-		players: {
-			'/#6reys8IXaGD-L5OPAAAA': {
-				username: 'qwe',
-				score: 0,
-				currentRole: 'player'
-			},
-			'/#6reys8IXaGD-L5OPAAAA': {
-				username: 'sup',
-				score: 0,
-				currentRole: 'player'
-			}
-		}
-	}
+    123: {
+        players: {
+            '/#6reys8IXaGD-L5OPAAAA': {
+                username: 'qwe',
+                score: 0,
+                currentRole: 'player'
+            },
+            '/#6reys8IXaGD-L5OPAAAA': {
+                username: 'sup',
+                score: 0,
+                currentRole: 'player'
+            }
+        }
+    }
 };
 
 io.on("connection", socket => {
+    socket.on('join:room', function(data) {
+        socket.join(room_name);
+        console.log('allData', data)
+        console.log('allGames', allGames)
+        console.log('data', io.sockets.adapter.rooms[room_name])
+        if (io.sockets.adapter.rooms[room_name].length === 1) {
+            io.in(socket.id).emit('first_player', "first_player");
+        }
+        if (io.sockets.adapter.rooms[room_name].length === 4) {
+            io.in(room_name).emit('start_game', "starting game....");
+        }
+    });
 
-	socket.on('new-game', function(data) {
-		allGames[data.gameId] = {
-			players: {
-				[socket.id]: {
-					username: data.username,
-					score: 0,
-					currentRole: 'picker'
-				}
-			}
-		}
-		console.log('new-game data.gameId=', data.gameId);
-		socket.join(data.gameId)
-		console.log('allGames=', allGames);
-		console.log('this games players=', allGames[data.gameId].players);
-		io.to(data.gameId).emit('player-joined', data, allGames[data.gameId])
-	})
+    socket.on('select_word', function(data, room_name) {
+        io.in(room_name).emit('selected_word', data)
+    });
 
-	socket.on('join-game', function(data) {
-		var gameId = parseInt(data.gameId)
-		allGames[gameId].players[socket.id] = {
-			username: data.username,
-			score: 0,
-			currentRole: 'player'
-		}
-		console.log('allGames=', allGames);
-		console.log('this games players=', allGames[data.gameId].players);
+    socket.on('leave:room', function(msg) {
+        msg.text = msg.user + ' has left the room';
+        socket.leave(msg.room);
+        socket.in(msg.room).emit('message', msg);
+    });
 
-		console.log("join-game data.gameId=", data.gameId);
-		socket.join(data.gameId)
-				console.log("io.sockets.adapter.rooms=", io.sockets.adapter.rooms);
-		io.to(data.gameId).emit('player-joined', data, allGames[data.gameId]) // loop through players in that game & emit to only them
-	})
+    socket.on('send:message', function(msg) {
+        socket.in(msg.room).emit('message', msg);
+    });
 
+    socket.on('send:definition', function(def) {
+        console.log(def);
+        io.in(def.room).emit('definition', def);
+    });
+
+    socket.on('updateChoice', function(choice, room) {
+        console.log('choice', choice)
+        io.in(room).emit('updateChoice', choice)
+    })
 });
 
 
@@ -80,7 +82,7 @@ app.set('view engine', 'hbs');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-	extended: false
+    extended: false
 }));
 app.use(cookieParser());
 
@@ -89,9 +91,9 @@ app.use('/', routes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-	var err = new Error('Not Found');
-	err.status = 404;
-	next(err);
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handlers
@@ -99,27 +101,27 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-	app.use(function(err, req, res, next) {
-		res.status(err.status || 500);
-		res.render('error', {
-			message: err.message,
-			error: err
-		});
-	});
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
 }
 
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-	res.status(err.status || 500);
-	res.render('error', {
-		message: err.message,
-		error: {}
-	});
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
 });
 
 
 module.exports = {
-	app,
-	server
+    app,
+    server
 };
