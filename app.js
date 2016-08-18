@@ -12,6 +12,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
+app.use(cors());
 socket.on('join:room', function(data) {
     var room_name = data.room_name;
     socket.join(room_name);
@@ -47,7 +48,6 @@ socket.on('updateChoice', function(choice, room) {
 });
 
 
-app.use(cors());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
