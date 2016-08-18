@@ -19,7 +19,13 @@ io.on('connection', function(socket) {
 
     socket.on('join:room', function(data) {
         var room_name = data.room_name;
-        socket.join(room_name);
+        if (io.sockets.adapter.rooms[room_name] == undefined || io.sockets.adapter.rooms[room_name].length < 4) {
+            // console.log(io.sockets.adapter.rooms[room_name].length || "undefined");
+            socket.join(room_name);
+        } else {
+            socket.emit('room_full', "The current room is full, please join another")
+        }
+
         if (io.sockets.adapter.rooms[room_name].length === 1) {
             io.in(socket.id).emit('first_player', "first_player");
         }
@@ -46,6 +52,7 @@ io.on('connection', function(socket) {
     });
 
     socket.on('updateScore', function(choice, room) {
+        console.log("choice in server: ", choice, "room in server: ", room);
         io.in(room).emit('updateScore', choice)
     })
 });
