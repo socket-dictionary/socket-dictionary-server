@@ -13,6 +13,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 app.use(cors());
+var allGames = {}
 
 io.on('connection', function(socket) {
 
@@ -50,8 +51,25 @@ io.on('connection', function(socket) {
         io.in(def.room).emit('definition', def);
     });
 
-    socket.on('updateScore', function(choice, room) {
-        io.in(room).emit('updateScore', choice)
+    gamesCounter = {}
+    socket.on('sendChoice', function(choice, room) {
+        if (gamesCounter[room]) {
+            gamesCounter[room]++;
+            if (gamesCounter[room] == 3) {
+				console.log("3 votes in....");
+				gamesCounter[room] = 0;
+                io.in(room).emit('roundFinished', "it works")
+            }
+        } else {
+            gamesCounter[room] = 1;
+        }
+
+
+        if (choice == 'picker') {
+            io.in(room).emit('picker', "update....")
+        } else {
+            io.in(room).emit(choice, "update....")
+        }
     })
 });
 
