@@ -39,14 +39,11 @@ socket.on('send:message', function(msg) {
 });
 
 socket.on('send:definition', function(def) {
-    console.log(def);
     io.in(def.room).emit('definition', def);
 });
 
 socket.on('updateChoice', function(choice, room) {
-console.log('choice', choice)
-io.in(room).emit('updateChoice', choice)
-})
+    io.in(room).emit('updateChoice', choice)
 });
 
 
