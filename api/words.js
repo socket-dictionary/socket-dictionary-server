@@ -42,12 +42,7 @@ module.exports = {
                     keys.forEach(key => {
                         if (definition.meaning[key] != '') {
                             var meaning = definition.meaning[key]
-                            var re = /\).*\(/;
-                            var found = def.match(re)[0]
-                            found = found.replace(/\)|\(/g, '').trim();
-                            found = found.split(';')[0];
-                            meaning = found;
-                            
+
                             var obj = {
                                 word,
                                 meaning
