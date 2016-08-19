@@ -56,7 +56,6 @@ io.on('connection', function(socket) {
         if (gamesCounter[room]) {
             gamesCounter[room]++;
             if (gamesCounter[room] == 3) {
-				console.log("3 votes in....");
 				gamesCounter[room] = 0;
                 io.in(room).emit('roundFinished', "it works")
             }

@@ -35,6 +35,14 @@ module.exports = {
                 }
             };
 
+            function modifyDef(def) {
+                var re = /\).*\(/;
+                var found = def.match(re)[0]
+                found = found.replace(/\)|\(/g, '').trim();
+                found = found.split(';')[0];
+                return found;
+            }
+
             function callback(error, response, body) {
                 if (!error && response.statusCode == 200) {
                     var definition = JSON.parse(body);
@@ -42,6 +50,7 @@ module.exports = {
                     keys.forEach(key => {
                         if (definition.meaning[key] != '') {
                             var meaning = definition.meaning[key]
+                            meaning = modifyDef(meaning);
                             var obj = {
                                 word,
                                 meaning
